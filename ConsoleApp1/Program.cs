@@ -1,4 +1,5 @@
-﻿using ConsoleApp1.Entities;
+﻿using ConsoleApp1.DAL;
+using ConsoleApp1.Entities;
 using System;
 
 namespace ConsoleApp1
@@ -7,7 +8,8 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            var context = new AppDbContext();
+            //var context = new AppDbContext();
+            var service = new StudentService();
 
             //var student = new Student
             //{
@@ -41,18 +43,19 @@ namespace ConsoleApp1
             //context.Students.AddRange(students);
             //context.SaveChanges();
 
-            var students = context.Students.ToList();
-            foreach (var student in students)
-            {
-                Console.WriteLine(student.Name);
-            }
-            context.Remove(students[0]);
 
-            students = context.Students.ToList();
-            foreach (var student in students)
-            {
-                Console.WriteLine(student.Name);
-            }
+            //var students = rep.GetAll.ToList();
+            //foreach (var student in students)
+            //{
+            //    Console.WriteLine(student.Name);
+            //}
+            //context.Remove(students[0]);
+
+            //students = context.Students.ToList();
+            //foreach (var student in students)
+            //{
+            //    Console.WriteLine(student.Name);
+            //}
         }
     }
 }
