@@ -1,6 +1,8 @@
 ﻿using ConsoleApp1.DAL;
 using ConsoleApp1.Entities;
+using ConsoleApp1.Services;
 using System;
+using System.ComponentModel.Design;
 
 namespace ConsoleApp1
 {
@@ -9,7 +11,7 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             //var context = new AppDbContext();
-            var service = new StudentService();
+            //var service = new StudentService();
 
             //var student = new Student
             //{
@@ -56,6 +58,13 @@ namespace ConsoleApp1
             //{
             //    Console.WriteLine(student.Name);
             //}
+            var start = new MenuService();
+            
+            while (true)
+            {
+                start.Menu();
+            }
+
         }
     }
 }

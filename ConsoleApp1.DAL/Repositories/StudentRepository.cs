@@ -47,10 +47,5 @@ namespace ConsoleApp1.DAL.Repositories
             _context.Students.Remove(student);
             _context.SaveChanges();
         }
-
-        public IEnumerable<Student> GetStudentById()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

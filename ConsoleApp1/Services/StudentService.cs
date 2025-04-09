@@ -67,10 +67,10 @@ namespace ConsoleApp1.Services
         public void UpdateDesc(int id, string desc)
         {
             var student = _studentRepository.GetAllStudents()
-                                      .FirstOrDefault(s => s.Description == desc);
+                                      .FirstOrDefault(s => s.Id== id);
             if (student == null)
             {
-                throw new ArgumentNullException(nameof(student), "Student name cannot be null");
+                throw new ArgumentNullException(nameof(student), "Student desc cannot be null");
             }
             student.Description = desc;
             _studentRepository.UpdateStudent(student);
