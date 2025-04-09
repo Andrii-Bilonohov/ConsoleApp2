@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.DAL.Data
 {
     public class AppDbContext : DbContext
     {
