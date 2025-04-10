@@ -11,6 +11,7 @@ namespace ConsoleApp1.Services
             _studentService = new StudentService();
         }
 
+
         public void Menu()
         {
             Console.WriteLine("1. Додати студента");
@@ -60,6 +61,8 @@ namespace ConsoleApp1.Services
                     break;
             }
         }
+
+
         private void AddStudent()
         {
             Console.WriteLine("Введіть ім'я студента:");
@@ -77,6 +80,8 @@ namespace ConsoleApp1.Services
             Console.Clear();
             Console.WriteLine("Студента додано!");
         }
+
+
         private void AddStudents()
         {
             Console.WriteLine("Скільки студентів ви хочете додати?");
@@ -92,6 +97,7 @@ namespace ConsoleApp1.Services
             {
                 Console.WriteLine($"Введіть ім'я студента {i + 1}:");
                 var name = Console.ReadLine();
+
                 Console.WriteLine($"Введіть опис студента {i + 1}:");
                 var desc = Console.ReadLine();
                 Student student = new Student
@@ -108,6 +114,7 @@ namespace ConsoleApp1.Services
             Console.WriteLine("Студенти успішно додані!");
         }
 
+
         private void UpdateStudent()
         {
             Console.WriteLine("Введіть Id студуента для оновлення: ");
@@ -118,47 +125,53 @@ namespace ConsoleApp1.Services
                 return;
             }
 
-
             var student = _studentService.GetStudentById(id);
-            if (IsStudentExist(student))
+            if (student == null)
             {
-                Console.WriteLine("Поточний студент: ");
-                Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
+                Console.Clear();
+                Console.WriteLine("Студента не знайдено.");
+                return;
+            }
 
-                Console.WriteLine("Що ви хочете змінти?");
-                Console.WriteLine("1. Ім'я");
-                Console.WriteLine("2. Опис");
+            Console.WriteLine("Поточний студент: ");
+            Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
 
-                if (!int.TryParse(Console.ReadLine(), out var variant))
-                {
+            Console.WriteLine("Що ви хочете змінти?");
+            Console.WriteLine("1. Ім'я");
+            Console.WriteLine("2. Опис");
+
+            if (!int.TryParse(Console.ReadLine(), out var variant))
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid input.");
+                return;
+            }
+
+            switch (variant)
+            {
+                case 1:
+                    Console.WriteLine("Введіть ім'я для заміни: ");
+                    string name = Console.ReadLine();
+                    _studentService.UpdateName(id, name);
+
                     Console.Clear();
-                    Console.WriteLine("Invalid input.");
-                    return;
-                }
+                    Console.WriteLine("Дані оновлені");
+                    break;
+                case 2:
+                    Console.WriteLine("Введіть опис для заміни: ");
+                    string? desc = Console.ReadLine();
+                    _studentService.UpdateDesc(id, desc);
 
-                switch (variant)
-                {
-                    case 1:
-                        Console.WriteLine("Введіть ім'я для заміни: ");
-                        string name = Console.ReadLine();
-                        _studentService.UpdateName(id, name);
-                        Console.Clear();
-                        Console.WriteLine("Дані оновлені");
-                        break;
-                    case 2:
-                        Console.WriteLine("Введіть опис для заміни: ");
-                        string? desc = Console.ReadLine();
-                        _studentService.UpdateDesc(id, desc);
-                        Console.Clear();
-                        Console.WriteLine("Дані оновлені");
-                        break;
-                    default:
-                        Console.Clear();
-                        Console.WriteLine("Невірний вибір");
-                        break;
-                }
+                    Console.Clear();
+                    Console.WriteLine("Дані оновлені");
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Невірний вибір");
+                    break;
             }
         }
+
 
         private void DeleteStudent()
         {
@@ -173,7 +186,6 @@ namespace ConsoleApp1.Services
                 return;
             }
 
-
             switch (choise)
             {
                 case 1:
@@ -183,25 +195,34 @@ namespace ConsoleApp1.Services
                         Console.Clear();
                         Console.WriteLine("Invalid input.");
                     }
-                    
+
                     var studentFindById = _studentService.GetStudentById(id);
-                    if (IsStudentExist(studentFindById))
+                    if (studentFindById == null)
                     {
-                        _studentService.DeleteById(id);
                         Console.Clear();
-                        Console.WriteLine("Студента видалено: ");
+                        Console.WriteLine("Студента не знайдено.");
+                        return;
                     }
+                    
+                    _studentService.DeleteById(id);
+                    Console.Clear();
+                    Console.WriteLine("Студента видалено: ");
                     break;
                 case 2:
                     Console.WriteLine("Введіть ім'я: ");
                     string name = Console.ReadLine();
                     var studentFindByName = _studentService.GetStudentByName(name);
-                    if (IsStudentExist(studentFindByName))
+
+                    if (studentFindByName == null)
                     {
-                        _studentService.DeleteByName(name);
                         Console.Clear();
-                        Console.WriteLine("Студента видалено: ");
+                        Console.WriteLine("Студента не знайдено.");
+                        return;
                     }
+                    
+                    _studentService.DeleteByName(name);
+                    Console.Clear();
+                    Console.WriteLine("Студента видалено: ");
                     break;
                 default:
                     Console.Clear();
@@ -209,6 +230,7 @@ namespace ConsoleApp1.Services
                     break;
             }
         }
+
 
         private void GetStudentById()
         {
@@ -221,15 +243,16 @@ namespace ConsoleApp1.Services
             }
 
             var student = _studentService.GetStudentById(id);
-            if (IsStudentExist(student))
+            if (student == null)
             {
                 Console.Clear();
                 Console.WriteLine("Студента не знайдено.");
-                
+
             }
             Console.Clear();
             Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
         }
+
 
         private void GetAllStudents()
         {
@@ -241,32 +264,22 @@ namespace ConsoleApp1.Services
             }
         }
 
+
         private void GetStudentByName()
         {
             Console.WriteLine("Введіть ім'я студента:");
             string name = Console.ReadLine();
+
             var student = _studentService.GetStudentByName(name);
-            if (!IsStudentExist(student))
+            if (student == null)
             {
                 Console.Clear();
                 Console.WriteLine("Студента не знайдено.");
                 return;
             }
+
             Console.Clear();
             Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
-        }
-
-        private bool IsStudentExist(Student student)
-        {
-            var students = _studentService.GetAllStudents();
-            foreach (var stud in students)
-            {
-                if (student.Id == stud.Id)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }
