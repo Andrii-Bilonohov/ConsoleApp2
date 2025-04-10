@@ -55,7 +55,9 @@ namespace ConsoleApp1.Services
                     Console.WriteLine();
                     break;
                 default:
+                    Console.Clear();
                     Console.WriteLine("Невірний вибір");
+                    Console.WriteLine();
                     break;
             }
         }
