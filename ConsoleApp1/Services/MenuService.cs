@@ -28,24 +28,31 @@ namespace ConsoleApp1.Services
             {
                 case "1":
                     AddStudent();
+                    Console.WriteLine();
                     break;
                 case "2":
                     AddStudents();
+                    Console.WriteLine();
                     break;
                 case "3":
                     UpdateStudent();
+                    Console.WriteLine();
                     break;
                 case "4":
                     DeleteStudent();
+                    Console.WriteLine();
                     break;
                 case "5":
                     GetAllStudents();
+                    Console.WriteLine();
                     break;
                 case "6":
                     GetStudentById();
+                    Console.WriteLine();
                     break;
                 case "7":
                     GetStudentByName();
+                    Console.WriteLine();
                     break;
                 default:
                     Console.WriteLine("Невірний вибір");
@@ -59,6 +66,7 @@ namespace ConsoleApp1.Services
             Console.WriteLine("Введіть опис студента:");
             var desc = Console.ReadLine();
             _studentService.AddStudent(new Student { Name = name, Description = desc} );
+            Console.Clear();
             Console.WriteLine("Студента додано!");
         }
         private void AddStudents()
@@ -67,6 +75,7 @@ namespace ConsoleApp1.Services
             if (int.TryParse(Console.ReadLine(), out var count)) { }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid input.");
             }
 
@@ -82,6 +91,7 @@ namespace ConsoleApp1.Services
             }
 
             _studentService.AddStudents(students);
+            Console.Clear();
             Console.WriteLine("Студенти успішно додані!");
         }
 
@@ -108,31 +118,37 @@ namespace ConsoleApp1.Services
                                 Console.WriteLine("Введіть ім'я для заміни: ");
                                 string name = Console.ReadLine();
                                 _studentService.UpdateName(id, name);
+                                Console.Clear();
                                 Console.WriteLine("Дані оновлені");
                                 break;
                             case 2:
                                 Console.WriteLine("Введіть опис для заміни: ");
                                 string? desc = Console.ReadLine();
                                 _studentService.UpdateDesc(id, desc);
+                                Console.Clear();
                                 Console.WriteLine("Дані оновлені");
                                 break;
                             default:
+                                Console.Clear();
                                 Console.WriteLine("Невірний вибір");
                                 break;
                         }
                     }
                     else
                     {
+                        Console.Clear();
                         Console.WriteLine("Invalid input.");
                     }
                 }
                 else
                 {
+                    Console.Clear();
                     Console.WriteLine("Студента не знайдено.");
                 }
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid input.");
             }
         }
@@ -153,16 +169,19 @@ namespace ConsoleApp1.Services
                             var studentFindById = _studentService.GetStudentById(id);
                             if (studentFindById == null)
                             {
+                                Console.Clear();
                                 Console.WriteLine("Студента не знайдено.");
                             }
                             else
                             {
                                 _studentService.DeleteById(id);
+                                Console.Clear();
                                 Console.WriteLine("Студента видалено: ");
                             }
                         }
                         else
                         {
+                            Console.Clear();
                             Console.WriteLine("Invalid input.");
                         }
 
@@ -173,16 +192,19 @@ namespace ConsoleApp1.Services
                         var studentFindByName = _studentService.GetStudentByName(name);
                         if (studentFindByName == null)
                         {
+                            Console.Clear();
                             Console.WriteLine("Студента не знайдено.");
                         }
                         else
                         {
                             _studentService.DeleteByName(name);
+                            Console.Clear();
                             Console.WriteLine("Студента видалено: ");
                         }
                            
                         break;
                     default:
+                        Console.Clear();
                         Console.WriteLine("Невірний вибір");
                         break;
 
@@ -190,6 +212,7 @@ namespace ConsoleApp1.Services
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid input.");
             }
         }
@@ -203,15 +226,18 @@ namespace ConsoleApp1.Services
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Invalid input.");
             }
             var student = _studentService.GetStudentById(id);
             if (student != null)
             {
+                Console.Clear();
                 Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Студента не знайдено.");
             }
         }
@@ -221,6 +247,7 @@ namespace ConsoleApp1.Services
             var students = _studentService.GetAllStudents();
             foreach (var student in students)
             {
+                Console.Clear();
                 Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
             }
         }
@@ -232,10 +259,12 @@ namespace ConsoleApp1.Services
             var student = _studentService.GetStudentByName(name);
             if (student != null)
             {
+                Console.Clear();
                 Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
             }
             else
             {
+                Console.Clear();
                 Console.WriteLine("Студента не знайдено.");
             }
         }
