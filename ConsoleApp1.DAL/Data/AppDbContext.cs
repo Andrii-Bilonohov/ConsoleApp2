@@ -1,4 +1,5 @@
-﻿using ConsoleApp1.Entities;
+﻿using ConsoleApp1.DAL.Entities;
+using ConsoleApp1.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -10,6 +11,8 @@ namespace ConsoleApp1.DAL.Data
         //private string _connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=UA;Integrated Security=True;Connect Timeout=30;";
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -21,6 +24,13 @@ namespace ConsoleApp1.DAL.Data
             var _connectionString = connection.GetConnectionString("DefaultConnection");
 
             optionsBuilder.UseSqlServer(_connectionString);
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasMany(u => u.Orders)
+                .WithOne(o => o.User)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

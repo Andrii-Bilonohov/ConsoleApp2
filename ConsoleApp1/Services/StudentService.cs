@@ -6,6 +6,8 @@ namespace ConsoleApp1.Services
     public class StudentService
     {
         private StudentRepository _studentRepository;
+
+
         public StudentService()
         {
             _studentRepository = new StudentRepository();

@@ -256,10 +256,10 @@ namespace ConsoleApp1.Services
 
         private void GetAllStudents()
         {
+            Console.Clear();
             var students = _studentService.GetAllStudents();
             foreach (var student in students)
             {
-                Console.Clear();
                 Console.WriteLine($"ID: {student.Id}, Ім'я: {student.Name}, Опис: {student.Description}");
             }
         }

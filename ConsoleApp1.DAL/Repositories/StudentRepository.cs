@@ -6,6 +6,7 @@ namespace ConsoleApp1.DAL.Repositories
     public class StudentRepository
     {
         private readonly AppDbContext _context;
+
         public StudentRepository()
         {
             _context = new AppDbContext();
