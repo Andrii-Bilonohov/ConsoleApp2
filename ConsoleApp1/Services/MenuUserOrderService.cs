@@ -30,7 +30,8 @@ namespace ConsoleApp1.Services
             Console.WriteLine("6. Add new product");
             Console.WriteLine("7. Edit product information");
             Console.WriteLine("8. Delete product");
-            Console.WriteLine("9. Exit");
+            Console.WriteLine("9. View all customers with orders");
+            Console.WriteLine("10. Exit");
 
             var option = GetValidString("Please enter your choice: ");
 
@@ -69,6 +70,10 @@ namespace ConsoleApp1.Services
                     Console.WriteLine();
                     break;
                 case "9":
+                    ViewCustomerWithOrders();
+                    Console.WriteLine();
+                    break;
+                case "10":
                     Environment.Exit(0);
                     break;
                 default:
@@ -76,6 +81,23 @@ namespace ConsoleApp1.Services
                     Console.WriteLine("Invalid option. Please try again.");
                     Console.WriteLine();
                     break;
+            }
+        }
+
+
+        private void ViewCustomerWithOrders()
+        {
+            Console.Clear();
+            var users = _userService.GetAllUsersWithOrders();
+            Console.Clear();
+            foreach (var user in users)
+            {
+                Console.WriteLine($"ID: {user.Id}, \nName: {user.Name}");
+                foreach (var order in user.Orders)
+                {
+                    Console.WriteLine($"Order ID: {order.Id}, Product Name: {order.ProductName}");
+                }
+                Console.WriteLine();
             }
         }
 
@@ -246,7 +268,7 @@ namespace ConsoleApp1.Services
             Console.Clear();
             Console.WriteLine("Customer deleted successfully.");
         }
-
+        
 
         private void ViewProductList()
         {

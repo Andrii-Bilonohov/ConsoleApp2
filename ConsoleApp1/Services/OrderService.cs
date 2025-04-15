@@ -66,6 +66,7 @@ namespace ConsoleApp1.Services
             _orderRepository.UpdateOrder(order);
         }
 
+
         public void UpdateProductName(int id, string productName)
         {
             var order = _orderRepository.GetAllOrders()
@@ -78,6 +79,7 @@ namespace ConsoleApp1.Services
             _orderRepository.UpdateOrder(order);
         }
 
+
         public void DeleteOrder(Order order)
         {
             if (order == null)
@@ -86,6 +88,7 @@ namespace ConsoleApp1.Services
             }
             _orderRepository.DeleteOrder(order);
         }
+
 
         public void DeleteOrderById(int id)
         {
@@ -97,6 +100,7 @@ namespace ConsoleApp1.Services
             }
             _orderRepository.DeleteOrder(order);
         }
+
 
         public void DeleteOrders(List<Order> orders)
         {
