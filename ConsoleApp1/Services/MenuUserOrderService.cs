@@ -88,7 +88,9 @@ namespace ConsoleApp1.Services
         private void ViewCustomerWithOrders()
         {
             Console.Clear();
+
             var users = _userService.GetAllUsersWithOrders();
+            
             Console.Clear();
             foreach (var user in users)
             {
@@ -289,13 +291,103 @@ namespace ConsoleApp1.Services
         {
             Console.Clear();
 
+            Console.WriteLine("What kind of buyer is buying?");
+
+            Console.WriteLine("Enter your ID or name");
+            Console.WriteLine("1. Id");
+            Console.WriteLine("2. Name");
+
+            var choice = GetValidString("Enter your choice: ");
+
+            switch (choice)
+            {
+                case "1":
+                    AddProductToCustomerById();
+                    break;
+                case "2":
+                    AddProductToCustomerByName();
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    return;
+            }
+        }
+
+
+        private void AddProductToCustomerById()
+        {
+            Console.Clear();
+
+            var customerId = GetValidInt("Enter customer Id: ");
+            var user = _userService.GetUserById(customerId);
+
+            if (user == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Customer not found.");
+                return;
+            }
+
             var productName = GetValidString("Enter product name: ");
-            var order = new Order { ProductName = productName, CreatedDate = DateTime.Now };
+            var product = _orderService.GetOrderByProductName(productName);
+
+            if (product == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Product not found.");
+                return;
+            }
+
+            var order = new Order
+            {
+                UserId = customerId,
+                ProductName = productName,
+                CreatedDate = DateTime.Now
+            };
 
             _orderService.AddOrder(order);
 
             Console.Clear();
-            Console.WriteLine("Product added successfully.");
+            Console.WriteLine("Product successfully added to customer.");
+        }
+
+
+        private void AddProductToCustomerByName()
+        {
+            Console.Clear();
+
+            var customerName = GetValidString("Enter customer name: ");
+            var user = _userService.GetUserByName(customerName);
+
+            if (user == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Customer not found.");
+                return;
+            }
+
+            var productName = GetValidString("Enter product name: ");
+            var product = _orderService.GetOrderByProductName(productName);
+
+            if (product == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Product not found.");
+                return;
+            }
+
+            var order = new Order
+            {
+                UserId = user.Id,
+                ProductName = productName,
+                CreatedDate = DateTime.Now
+            };
+
+            _orderService.AddOrder(order);
+
+            Console.Clear();
+            Console.WriteLine("Product successfully added to customer.");
         }
 
 
