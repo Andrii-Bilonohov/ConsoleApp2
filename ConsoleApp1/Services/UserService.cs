@@ -24,6 +24,16 @@ namespace ConsoleApp1.Services
             return _userRepository.GetAllUsers();
         }
 
+        public List<User> GetAllUsersByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name), "Name cannot be null or empty");
+            }
+
+            return _userRepository.GetAllUsersByName(name).ToList();
+        }
+
 
         public User? GetUserById(int id)
         {
@@ -115,7 +125,6 @@ namespace ConsoleApp1.Services
             user.Name = name;
             _userRepository.UpdateUser(user);
         }
-
 
         public void DeleteUser(User user)
         {

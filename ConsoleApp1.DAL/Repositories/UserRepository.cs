@@ -33,10 +33,17 @@ namespace ConsoleApp1.DAL.Repositories
         }
 
 
+        public IEnumerable<User> GetAllUsersByName(string name)
+        {
+            return _context.Users.Where(u => u.Name == name).ToList();
+        }
+
+
         public IEnumerable<User> GetAllUsersWithOrders()
         {
             return _context.Users
                 .Include(u => u.Orders)
+                .AsNoTracking()
                 .ToList();
         }
 
@@ -76,7 +83,6 @@ namespace ConsoleApp1.DAL.Repositories
             _context.Users.Update(user);
             _context.SaveChanges();
         }
-
 
         public void DeleteUser(User user)
         {

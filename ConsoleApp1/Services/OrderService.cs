@@ -1,10 +1,5 @@
 ﻿using ConsoleApp1.DAL.Entities;
 using ConsoleApp1.DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1.Services
 {
@@ -31,10 +26,25 @@ namespace ConsoleApp1.Services
         }
 
 
+        public List<Order> GetOrdersByUserId(int userId)
+        {
+            return _orderRepository.GetAllOrders()
+                .Where(o => o.UserId == userId)
+                .ToList();
+        }
+
 
         public Order? GetOrderByProductName(string productName)
         {
             return _orderRepository.GetOrderByProductName(productName);
+        }
+
+
+        public List<Order> GetOrdersByProductName(string productrName)
+        {
+            return _orderRepository.GetAllOrders()
+                                   .Where(o => o.ProductName == productrName)
+                                   .ToList();
         }
 
 
@@ -109,6 +119,22 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(orders), "Order object cannot be null");
             }
+            foreach (var order in orders)
+            {
+                _orderRepository.DeleteOrder(order);
+            }
+        }
+
+        public void DeleteOrdersByUserId(int userId)
+        {
+            var orders = _orderRepository.GetAllOrders()
+                                      .Where(o => o.UserId == userId)
+                                      .ToList();
+            if (orders == null)
+            {
+                throw new ArgumentNullException(nameof(orders), "Order object cannot be null");
+            }
+
             foreach (var order in orders)
             {
                 _orderRepository.DeleteOrder(order);

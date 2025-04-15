@@ -63,7 +63,6 @@ namespace ConsoleApp1.DAL.Repositories
             _context.SaveChanges();
         }
 
-
         public void DeleteAllOrders(List<Order> orders)
         {
             _context.Orders.RemoveRange(orders);

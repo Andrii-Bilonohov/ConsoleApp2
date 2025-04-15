@@ -1,4 +1,5 @@
 ﻿using ConsoleApp1.DAL.Entities;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -186,22 +187,56 @@ namespace ConsoleApp1.Services
             Console.Clear();
 
             var name = GetValidString("Enter customer name to edit: ");
-            var user = _userService.GetUserByName(name);
+            var users = _userService.GetAllUsersByName(name).ToList();
 
-            if (user == null)
+            if (users == null || !users.Any())
             {
                 Console.Clear();
                 Console.WriteLine("Customer not found.");
                 return;
             }
 
-            var newName = GetValidString("Enter new customer name: ");
-            user.Name = newName;
+            if (users.Count == 1)
+            {
+                var user = _userService.GetUserByName(users.First().Name);
 
-            _userService.UpdateUser(user);
+                var newName = GetValidString("Enter new customer name: ");
+                user.Name = newName;
 
-            Console.Clear();
-            Console.WriteLine("Customer information updated successfully.");
+                _userService.UpdateUser(user);
+                Console.Clear();
+                Console.WriteLine("Customer information updated successfully.");
+                return;
+            }
+
+            if (users.Count > 1)
+            {
+                Console.Clear();
+
+                Console.WriteLine("Multiple customers found with the same name:");
+                foreach (var user in users)
+                {
+                    Console.WriteLine($"ID: {user.Id}, Name: {user.Name}");
+                }
+
+                var userIdToEdit = GetValidInt("Enter the ID of the customer you want to edit: ");
+                var selectedUser = users.FirstOrDefault(u => u.Id == userIdToEdit);
+
+                if (selectedUser == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid ID. Operation aborted.");
+                    return;
+                }
+
+                var newName = GetValidString("Enter new customer name: ");
+                selectedUser.Name = newName;
+
+                _userService.UpdateUser(selectedUser);
+                Console.Clear();
+                Console.WriteLine("Customer information updated successfully.");
+            }
+
         }
 
 
@@ -256,19 +291,49 @@ namespace ConsoleApp1.Services
             Console.Clear();
 
             var name = GetValidString("Enter customer name to delete: ");
-            var user = _userService.GetUserByName(name);
+            var users = _userService.GetAllUsersByName(name).ToList();
 
-            if (user == null)
+            if (users == null || !users.Any())
             {
                 Console.Clear();
                 Console.WriteLine("Customer not found.");
                 return;
             }
 
-            _userService.DeleteUser(user);
+            if (users.Count == 1)
+            {
+                var user = _userService.GetUserByName(users.First().Name);
+                _userService.DeleteUser(user);
 
-            Console.Clear();
-            Console.WriteLine("Customer deleted successfully.");
+                Console.Clear();
+                Console.WriteLine("Customer deleted successfully.");
+                return;
+            }
+
+            if (users.Count > 1)
+            {
+                Console.Clear();
+
+                Console.WriteLine("Multiple customers found with the same name:");
+                foreach (var user in users)
+                {
+                    Console.WriteLine($"ID: {user.Id}, Name: {user.Name}");
+                }
+
+                var userIdToDelete = GetValidInt("Enter the ID of the customer you want to delete: ");
+                var selectedUser = users.FirstOrDefault(u => u.Id == userIdToDelete);
+
+                if (selectedUser == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid ID. Operation aborted.");
+                    return;
+                }
+
+                Console.Clear();
+                Console.WriteLine("Customer deleted successfully.");
+                _userService.DeleteUser(selectedUser);
+            }
         }
         
 
@@ -358,24 +423,50 @@ namespace ConsoleApp1.Services
             Console.Clear();
 
             var customerName = GetValidString("Enter customer name: ");
-            var user = _userService.GetUserByName(customerName);
+            var users = _userService.GetAllUsersByName(customerName).ToList();
 
-            if (user == null)
+            if (users == null || !users.Any())
             {
                 Console.Clear();
                 Console.WriteLine("Customer not found.");
                 return;
             }
 
-            var productName = GetValidString("Enter product name: ");
-            var product = _orderService.GetOrderByProductName(productName);
-
-            if (product == null)
+            if (users.Count == 1)
             {
-                Console.Clear();
-                Console.WriteLine("Product not found.");
+                var user = _userService.GetUserByName(users.First().Name);
+                AddProductToUser(user);
                 return;
             }
+
+            if (users.Count > 1)
+            {
+                Console.Clear();
+
+                Console.WriteLine("Multiple customers found with the same name:");
+                foreach (var user in users)
+                {
+                    Console.WriteLine($"ID: {user.Id}, Name: {user.Name}");
+                }
+
+                var userIdToAddProduct = GetValidInt("Enter the ID of the customer you want to add a product to: ");
+                var selectedUser = users.FirstOrDefault(u => u.Id == userIdToAddProduct);
+                
+                if (selectedUser == null)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid ID. Operation aborted.");
+                    return;
+                }
+                
+                AddProductToUser(selectedUser);
+            }
+        }
+
+
+        private void AddProductToUser(User user)
+        {
+            var productName = GetValidString("Enter product name: ");
 
             var order = new Order
             {
@@ -385,11 +476,10 @@ namespace ConsoleApp1.Services
             };
 
             _orderService.AddOrder(order);
-
+            
             Console.Clear();
             Console.WriteLine("Product successfully added to customer.");
         }
-
 
         private void EditProductInformation()
         {
@@ -495,16 +585,16 @@ namespace ConsoleApp1.Services
             Console.Clear();
 
             var id = GetValidInt("Enter product ID to delete: ");
-            var order = _orderService.GetOrderById(id);
+            List<Order> orders = _orderService.GetOrdersByUserId(id).ToList();
 
-            if (order == null)
+            if (orders == null || !orders.Any())
             {
                 Console.Clear();
                 Console.WriteLine("Product not found.");
                 return;
             }
 
-            _orderService.DeleteOrder(order);
+            _orderService.DeleteOrders(orders);
 
             Console.Clear();
             Console.WriteLine("Product deleted successfully.");
@@ -516,16 +606,16 @@ namespace ConsoleApp1.Services
             Console.Clear();
 
             var productName = GetValidString("Enter product name to delete: ");
-            var order = _orderService.GetOrderByProductName(productName);
+            List<Order> orders = _orderService.GetOrdersByProductName(productName);
 
-            if (order == null)
+            if (orders == null || !orders.Any())
             {
                 Console.Clear();
                 Console.WriteLine("Product not found.");
                 return;
             }
 
-            _orderService.DeleteOrder(order);
+            _orderService.DeleteOrders(orders);
 
             Console.Clear();
             Console.WriteLine("Product deleted successfully.");
