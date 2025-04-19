@@ -28,6 +28,7 @@ namespace ConsoleApp1.DAL.Repositories
         {
             var maxId = _context.Orders.Any() ? _context.Orders.Max(o => o.Id) : 0;
             order.Id = maxId + 1;
+
             _context.Orders.Add(order);
             _context.SaveChanges();
         }

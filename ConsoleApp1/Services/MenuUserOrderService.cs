@@ -36,7 +36,15 @@ namespace ConsoleApp1.Services
             Console.WriteLine("10. Delete customer");
             Console.WriteLine("11. Delete product");
             Console.WriteLine("12. Delete order");
-            Console.WriteLine("13. Exit");
+            Console.WriteLine();
+            Console.WriteLine("13. Get the top 3 users with the most orders");
+            Console.WriteLine("14. Find all orders made in the last 7 days");
+            Console.WriteLine("15. Find users with no orders");
+            Console.WriteLine("16. Create an order count for each user");
+            Console.WriteLine("17. Order with the longest product name");
+            Console.WriteLine("18. Delete all orders created more than a year ago");
+            Console.WriteLine("19. Sort users by the date of their last order (including those with none)");
+            Console.WriteLine("20. Exit");
 
             var option = GetValidString("Please enter your choice: ");
 
@@ -103,6 +111,41 @@ namespace ConsoleApp1.Services
                     break;
                 case "13":
                     Console.Clear();
+                    GetTop3UsersWithMostOrders();
+                    Console.WriteLine();
+                    break;
+                case "14":
+                    Console.Clear();
+                    GetOrdersByLast7Days();
+                    Console.WriteLine();
+                    break;
+                case "15":
+                    Console.Clear();
+                    GetUsersWithNoOrders();
+                    Console.WriteLine();
+                    break;
+                case "16":
+                    Console.Clear();
+                    GetOrderCountByUser();
+                    Console.WriteLine();
+                    break;
+                case "17":
+                    Console.Clear();
+                    GetOrderWithLongestProductName();
+                    Console.WriteLine();
+                    break;
+                case "18":
+                    Console.Clear();
+                    DeleteOldOrders();
+                    Console.WriteLine();
+                    break;
+                case "19":
+                    Console.Clear();
+                    SortUsersByLastOrderDate();
+                    Console.WriteLine();
+                    break;
+                case "20":
+                    Console.Clear();
                     Console.WriteLine("Exiting the application...");
                     Environment.Exit(0);
                     break;
@@ -114,7 +157,7 @@ namespace ConsoleApp1.Services
             }
         }
 
-
+        // Customers methods
         private void ViewCustomerList()
         {
             Console.Clear();
@@ -314,8 +357,9 @@ namespace ConsoleApp1.Services
                 Console.WriteLine();
             }
         }
-
-
+        
+        
+        // Products methods
         private void AddProduct()
         {
             Console.Clear();
@@ -496,12 +540,14 @@ namespace ConsoleApp1.Services
         }
 
 
+        // Orders methods
         private void AddOrder()
         {
             Console.Clear();
 
             var userName = GetValidString("Enter user name: ");
             var users = _userService.GetAllUsersByName(userName);
+            Console.WriteLine();
 
             if (users == null || !users.Any())
             {
@@ -510,12 +556,35 @@ namespace ConsoleApp1.Services
                 return;
             }
 
+            Console.WriteLine("Available goods:");
+            var products = _productService.GetAllProducts().ToList();
+
+            for(int i = 0; i < products.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {products[i].Name}, \nPrice: {products[i].Price}");
+                Console.WriteLine();
+            }
+
             var user = users.Count == 1 ? users.FirstOrDefault() : SelectUserFromList(users);
 
-            var productName = GetValidString("Enter product: ");
-            var product = _productService.GetProductByName(productName);
+            var choice = GetValidInt("Enter the number of the product you want to buy: ");
+            if (choice < 1 || choice > products.Count)
+            {
+                Console.Clear();
+                Console.WriteLine("Invalid product number.");
+                return;
+            }
 
+            var productBuy = products[choice - 1];
+            var product = _productService.GetProductById(productBuy.Id);
             if (product == null)
+            {
+                Console.Clear();
+                Console.WriteLine("Product not found.");
+                return;
+            }
+
+            if (productBuy == null)
             {
                 Console.Clear();
                 Console.WriteLine("Product not found.");
@@ -525,7 +594,7 @@ namespace ConsoleApp1.Services
             var order = new Order
             {
                 UserId = user.Id,
-                ProductId = product.Id,
+                ProductId = productBuy.Id,
                 CreatedDate = DateTime.Now
             };
 
@@ -647,6 +716,119 @@ namespace ConsoleApp1.Services
 
             Console.Clear();
             Console.WriteLine("Orders deleted successfully.");
+        }
+
+
+        private void GetTop3UsersWithMostOrders()
+        {
+            Console.Clear();
+            var users = _userAndOrderService.GetAllUsersWithOrders();
+            var topUsers = users
+                .OrderByDescending(u => u.Orders.Count)
+                .Take(3)
+                .ToList();
+            Console.Clear();
+            foreach (var user in topUsers)
+            {
+                Console.WriteLine($"ID: {user.Id}, Name: {user.Name}, Orders Count: {user.Orders.Count}");
+            }
+        }
+
+
+        private void GetOrdersByLast7Days()
+        {
+            Console.Clear();
+            var orders = _orderService.GetAllOrders()
+                .Where(o => o.CreatedDate >= DateTime.Now.AddDays(-7))
+                .ToList();
+            Console.Clear();
+            foreach (var order in orders)
+            {
+                var user = _userService.GetUserById(order.UserId);
+                var product = _productService.GetProductById(order.ProductId);
+                Console.WriteLine($"User: {user.Name}, \nProduct: {product.Name}, \nCreated Date: {order.CreatedDate}");
+                Console.WriteLine();
+            }
+        }
+
+
+        private void GetUsersWithNoOrders()
+        {
+            Console.Clear();
+            var users = _userAndOrderService.GetAllUsersWithOrders()
+                .Where(u => u.Orders.Count == 0)
+                .ToList();
+            Console.Clear();
+            foreach (var user in users)
+            {
+                Console.WriteLine($"ID: {user.Id}, Name: {user.Name}");
+            }
+        }
+
+
+        private void GetOrderCountByUser()
+        {
+            Console.Clear();
+            var users = _userAndOrderService.GetAllUsersWithOrders()
+                .Select(u => new { u.Name, OrderCount = u.Orders.Count })
+                .ToList();
+            Console.Clear();
+            foreach (var user in users)
+            {
+                Console.WriteLine($"Name: {user.Name}, Order Count: {user.OrderCount}");
+            }
+        }
+
+
+        private void GetOrderWithLongestProductName()
+        {
+            Console.Clear();
+            var orders = _orderService.GetAllOrders()
+                .Select(o => new
+                {
+                    o,
+                    ProductName = _productService.GetProductById(o.ProductId)?.Name
+                })
+                .OrderByDescending(x => x.ProductName.Length)
+                .FirstOrDefault();
+            if (orders != null)
+            {
+                Console.WriteLine($"Product Name: {orders.ProductName}");
+            }
+        }
+
+
+        private void DeleteOldOrders()
+        {
+            Console.Clear();
+            var orders = _orderService.GetAllOrders()
+                .Where(o => o.CreatedDate < DateTime.Now.AddYears(-1))
+                .ToList();
+            foreach (var order in orders)
+            {
+                _orderService.DeleteOrder(order);
+            }
+            Console.Clear();
+            Console.WriteLine("Old orders deleted successfully.");
+        }
+
+
+        private void SortUsersByLastOrderDate()
+        {
+            Console.Clear();
+            var users = _userAndOrderService.GetAllUsersWithOrders()
+                .Select(u => new
+                {
+                    u,
+                    LastOrderDate = u.Orders.OrderByDescending(o => o.CreatedDate).FirstOrDefault()?.CreatedDate
+                })
+                .OrderByDescending(x => x.LastOrderDate)
+                .ToList();
+            Console.Clear();
+            foreach (var user in users)
+            {
+                Console.WriteLine($"ID: {user.u.Id}, Name: {user.u.Name}, Last Order Date: {user.LastOrderDate}");
+            }
         }
 
 
