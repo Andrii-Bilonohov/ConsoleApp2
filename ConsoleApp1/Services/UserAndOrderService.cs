@@ -33,40 +33,5 @@ namespace ConsoleApp1.Services
             }
             return users;
         }
-
-
-        public User? GetUserByIdAndOrders(int id)
-        {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than zero");
-            }
-
-            var user = _userService.GetUserById(id);
-
-            if (user != null)
-            {
-                user.Orders = _orderService.GetOrdersByUserId(id);
-            }
-
-            return user;
-        }
-
-
-        public User? GetUserByNameAndOrders(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name), "Name cannot be null or empty");
-            }
-
-            var user = _userService.GetUserByName(name);
-            if (user != null)
-            {
-                user.Orders = _orderService.GetOrdersByUserId(user.Id);
-            }
-
-            return user;
-        }
     }
 }
