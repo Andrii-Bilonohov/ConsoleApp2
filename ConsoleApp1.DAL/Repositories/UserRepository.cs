@@ -21,49 +21,6 @@ namespace ConsoleApp1.DAL.Repositories
         }
 
 
-        public User? GetUserById(int id)
-        {
-            return _context.Users.FirstOrDefault(u => u.Id == id);
-        }
-
-
-        public User? GetUserByName(string name)
-        {
-            return _context.Users.FirstOrDefault(u => u.Name == name);
-        }
-
-
-        public IEnumerable<User> GetAllUsersByName(string name)
-        {
-            return _context.Users.Where(u => u.Name == name).ToList();
-        }
-
-
-        public IEnumerable<User> GetAllUsersWithOrders()
-        {
-            return _context.Users
-                .Include(u => u.Orders)
-                .AsNoTracking()
-                .ToList();
-        }
-
-
-        public User? GetUserByIdAndOrders(int id)
-        {
-            return _context.Users
-                .Include(u => u.Orders)
-                .FirstOrDefault(u => u.Id == id);
-        }
-
-
-        public User? GetUserByNameAndOrders(string name)
-        {
-            return _context.Users
-                .Include(u => u.Orders)
-                .FirstOrDefault(u => u.Name == name);
-        }
-
-
         public void AddUser(User user)
         {
             _context.Users.Add(user);
@@ -86,22 +43,6 @@ namespace ConsoleApp1.DAL.Repositories
 
         public void DeleteUser(User user)
         {
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
-
-
-        public void DeleteUserById(int id)
-        {
-            var user = GetUserById(id);
-            _context.Users.Remove(user);
-            _context.SaveChanges();
-        }
-
-
-        public void DeleteUserByName(string name)
-        {
-            var user = GetUserByName(name);
             _context.Users.Remove(user);
             _context.SaveChanges();
         }

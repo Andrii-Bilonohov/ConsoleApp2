@@ -30,8 +30,10 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(name), "Name cannot be null or empty");
             }
-
-            return _userRepository.GetAllUsersByName(name).ToList();
+            return _userRepository
+                .GetAllUsers()
+                .Where(u => u.Name == name)
+                .ToList();
         }
 
 
@@ -41,7 +43,9 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than zero");
             }
-            return _userRepository.GetUserById(id);
+            return _userRepository
+                .GetAllUsers()
+                .FirstOrDefault(u => u.Id == id);
         }
 
 
@@ -51,33 +55,9 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(name), "Name cannot be null or empty");
             }
-            return _userRepository.GetUserByName(name);
-        }
-
-
-        public IEnumerable<User> GetAllUsersWithOrders()
-        {
-            return _userRepository.GetAllUsersWithOrders();
-        }
-
-
-        public User? GetUserByIdAndOrders(int id)
-        {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id), "Id must be greater than zero");
-            }
-            return _userRepository.GetUserByIdAndOrders(id);
-        }
-
-
-        public User? GetUserByNameAndOrders(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name), "Name cannot be null or empty");
-            }
-            return _userRepository.GetUserByNameAndOrders(name);
+            return _userRepository
+                .GetAllUsers()
+                .FirstOrDefault(u => u.Name == name);
         }
 
 

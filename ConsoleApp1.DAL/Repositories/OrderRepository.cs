@@ -24,20 +24,10 @@ namespace ConsoleApp1.DAL.Repositories
             return _context.Orders;
         }
 
-        public Order? GetOrderById(int id)
-        {
-            return _context.Orders.FirstOrDefault(o => o.Id == id);
-        }
-
-
-        public Order? GetOrderByProductName(string productName)
-        {
-            return _context.Orders.FirstOrDefault(o => o.ProductName == productName);
-        }
-
-
         public void AddOrder(Order order)
         {
+            var maxId = _context.Orders.Any() ? _context.Orders.Max(o => o.Id) : 0;
+            order.Id = maxId + 1;
             _context.Orders.Add(order);
             _context.SaveChanges();
         }
@@ -45,6 +35,14 @@ namespace ConsoleApp1.DAL.Repositories
 
         public void AddOrders(List<Order> orders)
         {
+            var maxId = _context.Orders.Any() ? _context.Orders.Max(o => o.Id) : 0;
+
+            foreach (var order in orders)
+            {
+                maxId++;
+                order.Id = maxId;
+            }
+
             _context.Orders.AddRange(orders);
             _context.SaveChanges();
         }
@@ -63,7 +61,8 @@ namespace ConsoleApp1.DAL.Repositories
             _context.SaveChanges();
         }
 
-        public void DeleteAllOrders(List<Order> orders)
+
+        public void DeleteOrders(List<Order> orders)
         {
             _context.Orders.RemoveRange(orders);
             _context.SaveChanges();

@@ -13,6 +13,7 @@ namespace ConsoleApp1.DAL.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,10 +28,23 @@ namespace ConsoleApp1.DAL.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(u => u.Orders)
-                .WithOne(o => o.User)
-                .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<User>().HasMany(u => u.Orders)
+            //    .WithOne(o => o.User)
+            //    .HasForeignKey(o => o.UserId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Order>()
+                .HasKey(o => new { o.UserId, o.ProductId});
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Product)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.ProductId);
         }
     }
 }

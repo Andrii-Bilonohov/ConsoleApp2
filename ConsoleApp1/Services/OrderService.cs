@@ -1,5 +1,6 @@
 ﻿using ConsoleApp1.DAL.Entities;
 using ConsoleApp1.DAL.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleApp1.Services
 {
@@ -22,7 +23,8 @@ namespace ConsoleApp1.Services
 
         public Order? GetOrderById(int id)
         {
-            return _orderRepository.GetOrderById(id);
+            return _orderRepository.GetAllOrders()
+                .FirstOrDefault(o => o.Id == id);
         }
 
 
@@ -36,15 +38,16 @@ namespace ConsoleApp1.Services
 
         public Order? GetOrderByProductName(string productName)
         {
-            return _orderRepository.GetOrderByProductName(productName);
+            return _orderRepository.GetAllOrders()
+                .FirstOrDefault(o => o.Product.Name == productName);
         }
 
 
         public List<Order> GetOrdersByProductName(string productrName)
         {
             return _orderRepository.GetAllOrders()
-                                   .Where(o => o.ProductName == productrName)
-                                   .ToList();
+                .Where(o => o.Product.Name == productrName)
+                .ToList();
         }
 
 
@@ -54,6 +57,7 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(order), "Order object cannot be null");
             }
+
             _orderRepository.AddOrder(order);
         }
 
@@ -64,6 +68,8 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(orders), "Order object cannot be null");
             }
+
+
             _orderRepository.AddOrders(orders);
         }
 
@@ -86,7 +92,7 @@ namespace ConsoleApp1.Services
             {
                 throw new ArgumentNullException(nameof(order), "Order object cannot be null");
             }
-            order.ProductName = productName;
+            order.Product.Name = productName;
             _orderRepository.UpdateOrder(order);
         }
 
